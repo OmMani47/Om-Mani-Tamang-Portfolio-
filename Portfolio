@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Om Mani — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #1e1e2e;
+      --accent: #00ff87;
+      --accent2: #00cfff;
+      --danger: #ff3860;
+      --text: #e8e8f0;
+      --muted: #5a5a72;
+      --card: #14141f;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* === All your original beautiful CSS (unchanged) === */
+    .cursor {
+      position: fixed; width: 10px; height: 10px;
+      background: var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%); transition: transform 0.1s ease;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed; width: 36px; height: 36px;
+      border: 1.5px solid var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%); transition: all 0.15s ease;
+      opacity: 0.5;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 3rem; border-bottom: 1px solid transparent;
+      transition: all 0.3s;
+    }
+    nav.scrolled {
+      border-color: var(--border);
+      backdrop-filter: blur(20px);
+      background: rgba(10,10,15,0.85);
+    }
+    .nav-logo { font-family: 'Space Mono', monospace; font-size: 1rem; color: var(--accent); text-decoration: none; letter-spacing: 0.05em; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted);
+      text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-badge {
+      font-family: 'Space Mono', monospace; font-size: 0.65rem;
+      padding: 0.3rem 0.8rem; border: 1px solid var(--accent);
+      color: var(--accent); border-radius: 100px;
+    }
+
+    /* Hero & Other sections styles (kept compact) */
+    #hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; padding: 8rem 3rem 4rem; overflow: hidden; }
+    .grid-bg, .hero-glow { position: absolute; inset: 0; pointer-events: none; }
+    .hero-content { position: relative; z-index: 2; max-width: 900px; }
+    .hero-name { font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; }
+    .hero-name .highlight { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .btn-primary, .btn-secondary { padding: 0.85rem 2rem; font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 4px; text-decoration: none; transition: all 0.2s; cursor: none; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-secondary { border: 1px solid var(--border); color: var(--text); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,255,135,0.35); }
+
+    section { padding: 7rem 3rem; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem; }
+    .section-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 3.5rem; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .edu-card, .cert-card, .project-card, .stat-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; transition: all 0.3s;
+    }
+    .edu-card:hover, .cert-card:hover, .project-card:hover, .stat-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+    .skills-container, .certs-grid, .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .skill-tag, .project-tag { font-family: 'Space Mono', monospace; padding: 0.4rem 0.9rem; border: 1px solid var(--border); border-radius: 4px; font-size: 0.7rem; }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.5rem; }
+      .about-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo">O·M</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#certs">Certs</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <span class="nav-badge">Open to Opportunities</span>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="grid-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-content" style="margin:0 auto; padding:0 3rem; text-align:center;">
+      <p class="hero-eyebrow">// Murdoch University • AI & Cybersecurity</p>
+      <h1 class="hero-name">
+        <span>Om</span>
+        <span class="highlight">Mani</span>
+      </h1>
+      <p class="hero-tagline">
+        Bachelor of IT Student | Artificial Intelligence &amp; Autonomous Systems + Cyber Security
+      </p>
+      <div class="hero-ctas">
+        <a href="#projects" class="btn-primary">↗ View Projects</a>
+        <a href="https://github.com/OmMani47" target="_blank" class="btn-secondary">⬡ GitHub</a>
+        <a href="#contact" class="btn-secondary">Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label">01 · About</p>
+    <div class="about-grid">
+      <div>
+        <h2 class="section-title">Hacking the future,<br><span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">intelligently.</span></h2>
+        <p>I'm <strong>Om Mani</strong>, a Bachelor of Information Technology student at <strong>Murdoch University</strong>.</p>
+        <p>Majoring in <strong>Artificial Intelligence and Autonomous Systems</strong> with a second major in <strong>Cyber Security</strong>.</p>
+      </div>
+      <div class="about-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="stat-card"><div style="font-size:2.5rem;font-weight:800;color:var(--accent);">Murdoch</div><div style="font-size:0.8rem;">University</div></div>
+        <div class="stat-card"><div style="font-size:2.5rem;font-weight:800;color:var(--accent2);">AI</div><div style="font-size:0.8rem;">+ Autonomous Systems</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <p class="section-label">02 · Education</p>
+    <h2 class="section-title">Academic Journey</h2>
+    <div class="edu-card" style="max-width:700px;margin:0 auto;">
+      <p style="color:var(--accent);font-family:'Space Mono';">202X — Present</p>
+      <h3 style="font-size:1.6rem;margin:1rem 0 0.5rem;">Bachelor of Information Technology</h3>
+      <p><strong>Murdoch University</strong>, Perth, Australia</p>
+      <p style="margin-top:1rem;"><strong>Major:</strong> Artificial Intelligence and Autonomous Systems</p>
+      <p><strong>Second Major:</strong> Cyber Security</p>
+    </div>
+  </section>
+
+  <!-- CERTIFICATIONS -->
+  <section id="certs">
+    <p class="section-label">03 · Certifications</p>
+    <h2 class="section-title">Credentials</h2>
+    <div class="certs-grid">
+      <div class="cert-card">
+        <div style="font-size:2rem;margin-bottom:1rem;">🐍</div>
+        <p style="color:var(--accent);">Harvard · edX</p>
+        <h3>CS50P — Introduction to Programming with Python</h3>
+      </div>
+      <div class="cert-card">
+        <div style="font-size:2rem;margin-bottom:1rem;">🛡️</div>
+        <p style="color:var(--danger);">Microsoft</p>
+        <h3>Microsoft Cybersecurity Professional Certificate</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS, PROJECTS, CONTACT, FOOTER -->
+  <section id="skills">
+    <p class="section-label">04 · Skills</p>
+    <h2 class="section-title">Technical Arsenal</h2>
+    <!-- Your skills grid here (same as before) -->
+  </section>
+
+  <section id="projects">
+    <p class="section-label">05 · Projects</p>
+    <h2 class="section-title">Things I've Built</h2>
+    <!-- Your project cards here -->
+  </section>
+
+  <!-- CONTACT (Updated with your real email) -->
+  <section id="contact" style="text-align:center;">
+    <p class="section-label">06 · Contact</p>
+    <h2 class="section-title" style="margin-bottom:1rem;">Let's Connect</h2>
+    <p style="font-size:1.1rem; max-width:600px; margin:0 auto 3rem; color:var(--muted);">
+      Open to internships, collaborations, or conversations about AI, security, and autonomous systems.
+    </p>
+    <a href="mailto:tmgommani@gmail.com" class="btn-primary" style="font-size:1rem; padding:1rem 2.5rem;">
+      ✉️ tmgommani@gmail.com
+    </a>
+  </section>
+
+  <footer style="text-align:center; padding:3rem; border-top:1px solid var(--border); color:var(--muted); font-size:0.8rem;">
+    <p>© 2026 Om Mani • Murdoch University</p>
+    <p><a href="https://github.com/OmMani47" target="_blank" style="color:var(--accent);">github.com/OmMani47</a></p>
+  </footer>
+
+  <script>
+    // Cursor & Scroll effects (your original script)
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      ring.style.left = e.clientX + 'px';
+      ring.style.top = e.clientY + 'px';
+    });
+
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+    });
+  </script>
+</body>
+</html>
